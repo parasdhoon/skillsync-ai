@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
   const chat = await Chat.create({
     user: session.user.id,
-    title: "New Match",
+    chatTitle: "New Match",
     resumeText: "",
     jdText: "",
     matchScore: null,

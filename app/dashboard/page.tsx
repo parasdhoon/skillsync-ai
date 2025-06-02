@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
-import UploadPage from "@/app/upload/page";
+import PromptPage from "@/components/PromptPage";
 
 export default function DashboardLayout() {
   const { data: session } = useSession();
@@ -12,6 +12,16 @@ export default function DashboardLayout() {
   const [chatList, setChatList] = useState<{ id: string; title: string }[]>([]);
   const [chatContent, setChatContent] = useState<{ [id: string]: any }>({});
   const router = useRouter();
+
+  const createNewChat = async () => {
+    const res = await fetch("/api/chats", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: session?.user.id }),
+    });
+    const newChat = await res.json();
+    return { id: newChat.id, title: `Resume Match #${chatList.length + 1}` };
+  };
 
   useEffect(() => {
     if (!session?.user) return;
@@ -52,16 +62,6 @@ export default function DashboardLayout() {
 
     fetchChatContent();
   }, [activeChatId]);
-
-  const createNewChat = async () => {
-    const res = await fetch("/api/chats", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: session?.user.id }),
-    });
-    const newChat = await res.json();
-    return { id: newChat.id, title: `Resume Match #${chatList.length + 1}` };
-  };
 
   const handleNewChat = async () => {
     const newChat = await createNewChat();
@@ -121,7 +121,7 @@ export default function DashboardLayout() {
 
       <main className="flex-1 flex flex-col relative">
         <section className="flex-1 p-6 overflow-y-auto">
-          {activeChatId && <UploadPage chatId={activeChatId} chatData={chatContent[activeChatId]} />}
+          {activeChatId && <PromptPage chatId={activeChatId} chatData={chatContent[activeChatId]} />}
         </section>
       </main>
     </div>
