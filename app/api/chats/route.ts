@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const chats = await Chat.find({ user: session.user.id }).sort({ updatedAt: -1 });
   const response = chats.map((chat: any) => ({
     id: chat._id.toString(),
-    title: chat.title || "Untitled Chat",
+    title: chat.chatTitle || "Untitled Chat",
   }));
 
   return NextResponse.json(response);
@@ -37,5 +37,5 @@ export async function POST(req: NextRequest) {
     suggestions: [],
   });
 
-  return NextResponse.json({ id: chat._id.toString(), title: chat.title });
+  return NextResponse.json({ id: chat._id.toString(), title: chat.chatTitle });
 }
